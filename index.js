@@ -8,17 +8,12 @@ var aws = require("aws-sdk"),
 var s3 = new aws.S3({ apiVersion: '2006-03-01' });
 
 function forwardMail(mail){
-  // create reusable transporter object using the default SMTP transport
-  var transport = nodemailer.createTransport(sesTransport({
+  var transporter = nodemailer.createTransport(sesTransport({
       accessKeyId: config.awsKey,
       secretAccessKey: config.awsSecret,
       rateLimit: 5 // do not send more than 5 messages in a second
   }));
 
-  // NB! No need to recreate the transporter object. You can use
-  // the same transporter object for all e-mails
-
-  // setup e-mail data with unicode symbols
   var mailOptions = {
       from: config.from + ' <' + config.from + '>', // sender address
       to: config.to, // list of receivers
