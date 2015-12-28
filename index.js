@@ -15,7 +15,7 @@ function forwardMail(mail, context){
   }));
 
   var mailOptions = {
-      from: config.from + ' <' + config.from + '>', // sender address
+      from: config.from, // sender address
       to: config.to, // list of receivers
       subject: mail.subject, // Subject line
       text: mail.text, // plaintext body
