@@ -7,7 +7,7 @@ var aws = require("aws-sdk"),
 
 var s3 = new aws.S3({ apiVersion: '2006-03-01' });
 
-function forwardMail(mail){
+function forwardMail(mail, context){
   var transporter = nodemailer.createTransport(sesTransport({
       accessKeyId: config.awsKey,
       secretAccessKey: config.awsSecret,
@@ -24,11 +24,10 @@ function forwardMail(mail){
 
   // send mail with defined transport object
   transporter.sendMail(mailOptions, function(error, info){
-      if(error){
-          return console.log(error);
-      }
-      console.log('Message sent: ' + info.response);
+      if(error)
+        return context.fail(error);
 
+      context.succeed('Message sent: ' + info.response);
   });
 };
 
@@ -40,12 +39,7 @@ exports.handler = function(event, context) {
   var mailparser = new MailParser();
 
   mailparser.on("end", function(mail){
-    forwardMail(mail)
-      .then(function(){
-        context.succeed("Parsed mail");
-      }).catch(function(message){
-        context.fail(message);
-      });
+    forwardMail(mail, context);
   });
 
   console.log("Handling %s", key);
